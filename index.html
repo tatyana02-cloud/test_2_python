@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тест по Python — Основы</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .quiz-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 740px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      padding: 32px;
+      position: relative;
+    }
+    .start-screen {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .start-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 20px;
+    }
+    .rules-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 20px 24px;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+    .rules-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+    }
+    .rules-list {
+      list-style-type: decimal;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .rules-list li {
+      font-size: 15px;
+      color: #334155;
+      line-height: 1.5;
+    }
+    .btn-primary {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover {
+      background: #1e293b;
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #334155;
+      transition: width 0.3s ease;
+    }
+    .header-info {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .question-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+    .code-box {
+      background: #1e1e2e;
+      color: #ffffff;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+    }
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .option-btn {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 15px;
+      color: #334155;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      line-height: 1.4;
+    }
+    .option-btn:hover:not(:disabled):not(.wrong) {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+    .option-btn.correct {
+      background: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d !important;
+      font-weight: 600;
+    }
+    .option-btn.wrong {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #b91c1c !important;
+    }
+    .feedback-box {
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+      line-height: 1.5;
+    }
+    .feedback-box.correct {
+      background: #f0fdf4;
+      border-left: 5px solid #22c55e;
+      color: #166534;
+    }
+    .feedback-box.wrong {
+      background: #fef2f2;
+      border-left: 5px solid #ef4444;
+      color: #991b1b;
+    }
+    .code-subtitle {
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .correct-code-display {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+    .next-btn {
+      background: #334155;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      margin-left: auto;
+      transition: background 0.2s;
+    }
+    .next-btn:hover {
+      background: #1e293b;
+    }
+    .result-screen {
+      display: none;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .result-score {
+      font-size: 44px;
+      font-weight: 800;
+      color: #1e293b;
+      margin: 12px 0;
+    }
+    .result-msg {
+      font-size: 15px;
+      color: #475569;
+      margin-bottom: 24px;
+    }
+    .results-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px 0 28px 0;
+    }
+    .badge-item {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .badge-item.correct {
+      background: #dcfce7;
+      color: #15803d;
+      border: 2px solid #22c55e;
+    }
+    .badge-item.wrong {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 2px solid #ef4444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-card">
+    <div class="start-screen" id="start-screen">
+      <h1 class="start-title">Тест: Основы Python (Условия и арифметика)</h1>
+      <div class="rules-card">
+        <div class="rules-title">Инструкция к прохождению:</div>
+        <ol class="rules-list">
+          <li><strong>Начисление баллов:</strong> 1 балл дается только за выбор правильного ответа с первой попытки.</li>
+          <li><strong>Разбор решений:</strong> после выбора варианта отображается подробное объяснение работы кода.</li>
+          <li><strong>Порядок:</strong> переход к следующему заданию открывается только после нахождения правильного ответа.</li>
+        </ol>
+      </div>
+      <button class="btn-primary" onclick="startQuiz()">Начать тестирование</button>
+    </div>
+
+    <div id="quiz-content" style="display: none;">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+      <div class="header-info">
+        <span id="question-number">Задание 1 из 16</span>
+        <span id="score-counter">Баллы: 0</span>
+      </div>
+      <div class="question-title" id="question-text"></div>
+      <div class="code-box" id="code-block" style="display: none;"></div>
+      <div class="options-grid" id="options"></div>
+      <div class="feedback-box" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Следующее задание</button>
+    </div>
+
+    <div class="result-screen" id="result-screen">
+      <h2>Тестирование завершено</h2>
+      <div class="result-score" id="final-score">0 / 16</div>
+      <p class="result-msg" id="final-message"></p>
+      
+      <div style="font-weight: 600; color: #334155; margin-bottom: 8px;">Результаты по заданиям:</div>
+      <div class="results-badges" id="results-badges"></div>
+
+      <button class="btn-primary" onclick="restartQuiz()">Пройти повторно</button>
+    </div>
+  </div>
+
+  <script>
+    // Пулы вариантов для заданий с динамическими числами
+    const dynamicSlots = {
+      // Слот №1: обычное деление /
+      slot1: [
+        {
+          text: "№1. Какой результат и тип данных вернет операция деления 7 / 2?",
+          code: "print(7 / 2)",
+          options: [
+            { text: "3 (тип int)", comment: "Одинарный слэш / всегда выполняет точное деление и возвращает вещественное число (float).", isCorrect: false },
+            { text: "3.5 (тип float)", comment: "Оператор / в Python ВСЕГДА возвращает значение типа с плавающей точкой (float).", isCorrect: true },
+            { text: "3.5 (тип str)", comment: "Результатом деления является числовое значение типа float, а не строка.", isCorrect: false },
+            { text: "1 (тип int)", comment: "1 — это остаток от деления (оператор %), а не частное.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№1. Какой результат и тип данных вернет операция деления 9 / 2?",
+          code: "print(9 / 2)",
+          options: [
+            { text: "4 (тип int)", comment: "Одинарный слэш / всегда выполняет точное деление и возвращает вещественное число (float).", isCorrect: false },
+            { text: "4.5 (тип float)", comment: "Оператор / в Python ВСЕГДА возвращает значение типа с плавающей точкой (float).", isCorrect: true },
+            { text: "4.5 (тип str)", comment: "Результатом деления является числовое значение типа float, а не строка.", isCorrect: false },
+            { text: "1 (тип int)", comment: "1 — это остаток от деления (оператор %), а не частное.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№1. Какой результат и тип данных вернет операция деления 11 / 4?",
+          code: "print(11 / 4)",
+          options: [
+            { text: "2 (тип int)", comment: "Одинарный слэш / отбрасывание дробной части не производит.", isCorrect: false },
+            { text: "2.75 (тип float)", comment: "Оператор / в Python ВСЕГДА выполняет точное вещественное деление (float).", isCorrect: true },
+            { text: "2.75 (тип str)", comment: "Результатом деления является числовое значение (float), а не текст.", isCorrect: false },
+            { text: "3 (тип int)", comment: "Python не производит математическое округление при обычном делении.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №2: целочисленное деление // и остаток %
+      slot2: [
+        {
+          text: "№2. Что выведет интерпретатор при выполнении операций целочисленного деления и взятия остатка?",
+          code: "print(19 // 5, 19 % 5)",
+          options: [
+            { text: "3.8 4", comment: "Оператор // отбрасывает дробную часть и возвращает строго целое число 3.", isCorrect: false },
+            { text: "3 4", comment: "19 // 5 дает 3 целых, а 19 % 5 дает остаток 4 (так как 3 * 5 + 4 = 19).", isCorrect: true },
+            { text: "4 3", comment: "Обратите внимание на порядок вывода: сначала целая часть (3), затем остаток (4).", isCorrect: false },
+            { text: "3 9", comment: "Остаток от деления на 5 не может быть равен или больше 5.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№2. Что выведет интерпретатор при выполнении операций целочисленного деления и взятия остатка?",
+          code: "print(23 // 4, 23 % 4)",
+          options: [
+            { text: "5.75 3", comment: "Оператор // отсекает дробную часть без округления, оставляя 5.", isCorrect: false },
+            { text: "5 3", comment: "23 // 4 дает 5 целых, а 23 % 4 дает остаток 3 (так как 5 * 4 + 3 = 23).", isCorrect: true },
+            { text: "3 5", comment: "Порядок аргументов: сначала результат // (5), затем результат % (3).", isCorrect: false },
+            { text: "5 7", comment: "Остаток от деления на 4 всегда строго меньше 4.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№2. Что выведет интерпретатор при выполнении операций целочисленного деления и взятия остатка?",
+          code: "print(17 // 3, 17 % 3)",
+          options: [
+            { text: "5.6 2", comment: "Оператор // отбрасывает дробную часть и возвращает целое число 5.", isCorrect: false },
+            { text: "5 2", comment: "17 // 3 дает 5 целых, а 17 % 3 дает остаток 2 (так как 5 * 3 + 2 = 17).", isCorrect: true },
+            { text: "2 5", comment: "Сначала выводится целая часть (5), затем остаток (2).", isCorrect: false },
+            { text: "5 1", comment: "17 - 15 = 2, поэтому остаток равен 2.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №4: разряды числа (десятки)
+      slot4: [
+        {
+          text: "№4. Какое число будет напечатано в консоли в результате работы этого кода?",
+          code: "n = 482\nprint((n // 10) % 10)",
+          options: [
+            { text: "2", comment: "2 — это последняя цифра (результат операции n % 10).", isCorrect: false },
+            { text: "4", comment: "4 — это разряд сотен (результат n // 100).", isCorrect: false },
+            { text: "8", comment: "Сначала 482 // 10 отсекает единицы и дает 48. Затем 48 % 10 возвращает последнюю цифру — 8 (разряд десятков).", isCorrect: true },
+            { text: "48", comment: "Остаток % 10 оставляет строго одну последнюю цифру от промежуточного числа 48.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№4. Какое число будет напечатано в консоли в результате работы этого кода?",
+          code: "n = 739\nprint((n // 10) % 10)",
+          options: [
+            { text: "9", comment: "9 — это последняя цифра (результат операции n % 10).", isCorrect: false },
+            { text: "7", comment: "7 — это разряд сотен (результат n // 100).", isCorrect: false },
+            { text: "3", comment: "Сначала 739 // 10 отсекает единицы и дает 73. Затем 73 % 10 возвращает 3 (разряд десятков).", isCorrect: true },
+            { text: "73", comment: "Остаток % 10 выделяет одну цифру от 73.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№4. Какое число будет напечатано в консоли в результате работы этого кода?",
+          code: "n = 561\nprint((n // 10) % 10)",
+          options: [
+            { text: "1", comment: "1 — это последняя цифра (результат n % 10).", isCorrect: false },
+            { text: "5", comment: "5 — это первая цифра числа (сотни).", isCorrect: false },
+            { text: "6", comment: "Сначала 561 // 10 отсекает единицы и дает 56. Затем 56 % 10 дает 6 (разряд десятков).", isCorrect: true },
+            { text: "56", comment: "Остаток % 10 оставляет только одну последнюю цифру.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №6: проверка кода через оператор != (2 вариации)
+      slot6: [
+        {
+          text: "№6. Что напечатает программа при проверке введенного кода доступа через оператор !=?",
+          code: "code = 1234\n\nif code != 0:\n    print(\"Код введен\")\nelse:\n    print(\"Код отсутствует\")",
+          options: [
+            { text: "Код введен", comment: "Оператор != означает «не равно». Так как 1234 не равно 0, условие code != 0 истинно (True), поэтому срабатывает ветка if.", isCorrect: true },
+            { text: "Код отсутствует", comment: "Ветка else сработала бы только если бы переменная code была равна 0.", isCorrect: false },
+            { text: "Код введен Код отсутствует", comment: "В конструкции if ... else всегда выполняется только одна из двух веток.", isCorrect: false },
+            { text: "Ошибка SyntaxError", comment: "Оператор != записан полностью корректно.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№6. Что напечатает программа при проверке введенного кода доступа через оператор !=?",
+          code: "code = 0\n\nif code != 0:\n    print(\"Код введен\")\nelse:\n    print(\"Код отсутствует\")",
+          options: [
+            { text: "Код отсутствует", comment: "Оператор != проверяет «не равно». Так как переменная code равна 0, условие code != 0 ложно (False), поэтому срабатывает ветка else.", isCorrect: true },
+            { text: "Код введен", comment: "Ветка if сработала бы только если число code не было равно нулю.", isCorrect: false },
+            { text: "Код введен Код отсутствует", comment: "В конструкции if ... else всегда выполняется строго один блок.", isCorrect: false },
+            { text: "Ошибка SyntaxError", comment: "Синтаксис программы полностью правильный.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №7: проверка прохода на аттракцион (оператор and)
+      slot7: [
+        {
+          text: "№7. Что выведет программа при проверке условий прохода на аттракцион?",
+          code: "age = 12\nticket = \"да\"\n\nif age >= 14 and ticket == \"да\":\n    print(\"Проход разрешен\")\nelse:\n    print(\"Вход закрыт\")",
+          options: [
+            { text: "Вход закрыт", comment: "Возраст 12 лет меньше требуемых 14 (условие age >= 14 ложно). Для оператора and оба условия должны быть True, поэтому срабатывает else.", isCorrect: true },
+            { text: "Проход разрешен", comment: "Оператор and требует одновременной истинности ОБОИХ условий. Билет есть, но возраст не подошел.", isCorrect: false },
+            { text: "Проход разрешен Вход закрыт", comment: "В блоке if ... else выполняется только одна ветка.", isCorrect: false },
+            { text: "Ошибка SyntaxError", comment: "Синтаксис условия с оператором and полностью корректен.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№7. Что выведет программа при проверке условий прохода на аттракцион?",
+          code: "age = 16\nticket = \"нет\"\n\nif age >= 14 and ticket == \"да\":\n    print(\"Проход разрешен\")\nelse:\n    print(\"Вход закрыт\")",
+          options: [
+            { text: "Вход закрыт", comment: "Возраст подходит (16 >= 14), но билета нет (ticket == 'нет'). Для оператора and достаточно одной лжи, чтобы всё условие стало False и сработал else.", isCorrect: true },
+            { text: "Проход разрешен", comment: "Без билета пройти нельзя: второе условие ticket == 'да' возвращает False.", isCorrect: false },
+            { text: "Ошибка SyntaxError", comment: "Синтаксис условия полностью корректен.", isCorrect: false },
+            { text: "Ничего не выведет", comment: "Ветка else гарантированно выполнится и выведет сообщение.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№7. Что выведет программа при проверке условий прохода на аттракцион?",
+          code: "age = 15\nticket = \"да\"\n\nif age >= 14 and ticket == \"да\":\n    print(\"Проход разрешен\")\nelse:\n    print(\"Вход закрыт\")",
+          options: [
+            { text: "Проход разрешен", comment: "Оба условия истинны: возраст 15 >= 14 (True) и билет есть (ticket == 'да' -> True). Оператор and возвращает True, поэтому срабатывает if.", isCorrect: true },
+            { text: "Вход закрыт", comment: "Ветка else срабатывает только при наличии хотя бы одного False.", isCorrect: false },
+            { text: "Проход разрешен Вход закрыт", comment: "Выполняется строго одна подошедшая ветка.", isCorrect: false },
+            { text: "Ошибка TypeError", comment: "Условие написано корректно, ошибок нет.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №8: проверка права на льготный проезд (оператор or)
+      slot8: [
+        {
+          text: "№8. Что выведет этот код при проверке права на льготный проезд?",
+          code: "is_student = False\nis_pensioner = True\n\nif is_student or is_pensioner:\n    print(\"Скидка\")\nelse:\n    print(\"Без скидки\")",
+          options: [
+            { text: "Скидка", comment: "Оператор or возвращает True, если истинно ХОТЯ БЫ ОДНО условие. Так как is_pensioner == True, условие выполняется и срабатывает ветка if.", isCorrect: true },
+            { text: "Без скидки", comment: "Ветка else выполняется только в том случае, когда ОБА условия ложны (False).", isCorrect: false },
+            { text: "Ошибка выполнения TypeError", comment: "Логические переменные типа bool абсолютно корректно обрабатываются оператором or.", isCorrect: false },
+            { text: "Скидка Без скидки", comment: "Конструкция if ... else всегда исполняет строго один из двух блоков.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№8. Что выведет этот код при проверке права на льготный проезд?",
+          code: "is_student = False\nis_pensioner = False\n\nif is_student or is_pensioner:\n    print(\"Скидка\")\nelse:\n    print(\"Без скидки\")",
+          options: [
+            { text: "Без скидки", comment: "Оба условия ложны (False or False дает False), поэтому управление переходит в ветку else («Без скидки»).", isCorrect: true },
+            { text: "Скидка", comment: "Для выполнения if нужно хотя бы одно True, а здесь обе переменные равны False.", isCorrect: false },
+            { text: "Ошибка выполнения TypeError", comment: "Сравнение булевых переменных абсолютно корректно.", isCorrect: false },
+            { text: "Ничего не выведет", comment: "Ветка else гарантированно сработает и напечатает текст.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№8. Что выведет этот код при проверке права на льготный проезд?",
+          code: "is_student = True\nis_pensioner = False\n\nif is_student or is_pensioner:\n    print(\"Скидка\")\nelse:\n    print(\"Без скидки\")",
+          options: [
+            { text: "Скидка", comment: "Переменная is_student равна True. Для оператора or («ИЛИ») достаточно одного истинного условия, поэтому сразу срабатывает if.", isCorrect: true },
+            { text: "Без скидки", comment: "Ветка else сработала бы только если бы оба значения были False.", isCorrect: false },
+            { text: "Ошибка выполнения TypeError", comment: "Синтаксис условия полностью корректен.", isCorrect: false },
+            { text: "Скидка Без скидки", comment: "Выполняется только одна подошедшая ветка.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №9: агрегатное состояние (температура t)
+      slot9: [
+        {
+          text: "№9. Что напечатает программа при значении переменной t = 20?",
+          code: "t = 20\n\nif t <= 0:\n    print(\"Лед\")\nelif t >= 100:\n    print(\"Пар\")\nelse:\n    print(\"Вода\")",
+          options: [
+            { text: "Вода", comment: "Оба условия выше ложны, поэтому управление автоматически переходит в ветку else (диапазон от 1 до 99).", isCorrect: true },
+            { text: "Лед", comment: "Условие 20 <= 0 ложно (False).", isCorrect: false },
+            { text: "Пар", comment: "Условие 20 >= 100 ложно (False).", isCorrect: false },
+            { text: "Ничего не выведет", comment: "Блок else гарантированно перехватывает все оставшиеся варианты.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№9. Что напечатает программа при значении переменной t = -5?",
+          code: "t = -5\n\nif t <= 0:\n    print(\"Лед\")\nelif t >= 100:\n    print(\"Пар\")\nelse:\n    print(\"Вода\")",
+          options: [
+            { text: "Лед", comment: "Условие t <= 0 истинно (-5 <= 0), поэтому сразу выполняется блок if и выводится «Лед».", isCorrect: true },
+            { text: "Пар", comment: "Условие t >= 100 даже не проверяется, так как сработал первый if.", isCorrect: false },
+            { text: "Вода", comment: "Ветка else срабатывает только когда все предыдущие if и elif дали False.", isCorrect: false },
+            { text: "Лед Вода", comment: "В каскаде if-elif-else срабатывает строго один блок.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№9. Что напечатает программа при значении переменной t = 100?",
+          code: "t = 100\n\nif t <= 0:\n    print(\"Лед\")\nelif t >= 100:\n    print(\"Пар\")\nelse:\n    print(\"Вода\")",
+          options: [
+            { text: "Пар", comment: "Первое условие ложно, а условие elif t >= 100 истинно (100 >= 100), поэтому выводится «Пар».", isCorrect: true },
+            { text: "Лед", comment: "Условие 100 <= 0 ложно (False).", isCorrect: false },
+            { text: "Вода", comment: "До ветки else управление не доходит, так как elif выполнился.", isCorrect: false },
+            { text: "Пар Вода", comment: "После выполнения подошедшей ветки elif каскад условий завершает работу.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ],
+
+      // Слот №11: вложенные условия (пароль и пин-код)
+      slot11: [
+        {
+          text: "№11. Что выведет код с вложенными условиями при проверке пароля и пин-кода?",
+          code: "password = \"1234\"\npin = \"9999\"\n\nif password == \"1234\":\n    if pin == \"0000\":\n        print(\"Доступ открыт\")\n    else:\n        print(\"Неверный пин-код\")\nelse:\n    print(\"Неверный пароль\")",
+          options: [
+            { text: "Неверный пин-код", comment: "Пароль верный, программа заходит во внутренний блок, где проверка pin == '0000' дает False и срабатывает внутренний else.", isCorrect: true },
+            { text: "Доступ открыт", comment: "Пин-код равен 9999, поэтому внутреннее условие pin == '0000' не выполняется.", isCorrect: false },
+            { text: "Неверный пароль", comment: "Внешний else не сработает, так как password == '1234' истинно.", isCorrect: false },
+            { text: "Неверный пин-код Неверный пароль", comment: "Внешний else относится исключительно к ошибке пароля.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№11. Что выведет код с вложенными условиями при проверке пароля и пин-кода?",
+          code: "password = \"0000\"\npin = \"0000\"\n\nif password == \"1234\":\n    if pin == \"0000\":\n        print(\"Доступ открыт\")\n    else:\n        print(\"Неверный пин-код\")\nelse:\n    print(\"Неверный пароль\")",
+          options: [
+            { text: "Неверный пароль", comment: "Первое же условие password == '1234' дает False, поэтому программа сразу переходит во внешний else («Неверный пароль»).", isCorrect: true },
+            { text: "Доступ открыт", comment: "Внешнее условие password == '1234' сразу ложно, внутрь программа даже не заходит.", isCorrect: false },
+            { text: "Неверный пин-код", comment: "Проверка пин-кода даже не начинается, так как не подошел пароль.", isCorrect: false },
+            { text: "Ошибка выполнения", comment: "Вложенные условия синтаксически корректны.", isCorrect: false }
+          ],
+          correctCode: null
+        },
+        {
+          text: "№11. Что выведет код с вложенными условиями при проверке пароля и пин-кода?",
+          code: "password = \"1234\"\npin = \"0000\"\n\nif password == \"1234\":\n    if pin == \"0000\":\n        print(\"Доступ открыт\")\n    else:\n        print(\"Неверный пин-код\")\nelse:\n    print(\"Неверный пароль\")",
+          options: [
+            { text: "Доступ открыт", comment: "И пароль (\"1234\"), и пин-код (\"0000\") верны. Оба условия последовательно возвращают True, поэтому выводится «Доступ открыт».", isCorrect: true },
+            { text: "Неверный пин-код", comment: "Пин-код совпал с '0000', поэтому внутренний else не выполняется.", isCorrect: false },
+            { text: "Неверный пароль", comment: "Пароль совпал, внешний else игнорируется.", isCorrect: false },
+            { text: "Доступ открыт Неверный пин-код", comment: "Срабатывает только ветка успешного входа.", isCorrect: false }
+          ],
+          correctCode: null
+        }
+      ]
+    };
+
+    // Статичные задания теста
+    const staticQuestions = [
+      // Задание 3
+      {
+        text: "№3. Какое выражение позволяет получить последнюю цифру любого положительного целого числа n?",
+        code: null,
+        options: [
+          { text: "n // 10", comment: "Деление нацело // 10 отрезает последнюю цифру, а не изолирует её.", isCorrect: false },
+          { text: "n % 10", comment: "Остаток от деления на 10 всегда в точности равен разряду единиц (последней цифре).", isCorrect: true },
+          { text: "n % 2", comment: "n % 2 служит для проверки числа на четность, возвращая 0 или 1.", isCorrect: false },
+          { text: "n ** 10", comment: "Оператор ** выполняет возведение числа в 10-ю степень.", isCorrect: false }
+        ],
+        correctCode: null
+      },
+      // Задание 5
+      {
+        text: "№5. Что означает оператор != в условиях Python?",
+        code: "if x != 0:\n    print(\"Число не ноль\")",
+        options: [
+          { text: "Проверка на неравенство («не равно»)", comment: "Оператор != проверяет, что левая и правая части не равны друг другу. Если x не равен 0, условие возвращает True.", isCorrect: true },
+          { text: "Присваивание переменной значения с отрицанием", comment: "Для присваивания значений используется одиночный знак «=». Оператор != является оператором сравнения.", isCorrect: false },
+          { text: "Проверка на строгое равенство двух величин", comment: "Проверка на равенство выполняется с помощью двойного знака «==».", isCorrect: false },
+          { text: "Логическое умножение условий", comment: "Логическое умножение (связка «И») в Python обозначается словом and.", isCorrect: false }
+        ],
+        correctCode: null
+      },
+      // Задание 10
+      {
+        text: "№10. Какое значение переменной x будет напечатано на экране?",
+        code: "x = 15\n\nif x > 20:\n    x = x + 5\nelif x >= 10:\n    x = x * 2\nelif x > 5:\n    x = x + 100\nelse:\n    x = 0\n\nprint(x)",
+        options: [
+          { text: "30", comment: "Условие x > 20 ложно. Условие x >= 10 истинно (15 >= 10), поэтому выполняется x = 15 * 2 = 30. Каскад сразу завершается, нижние elif x > 5 уже не проверяются.", isCorrect: true },
+          { text: "130", comment: "Каскад if-elif выполняется только до первого совпадения. Нижние ветки не вызываются.", isCorrect: false },
+          { text: "20", comment: "Первое условие 15 > 20 ложно, поэтому блок if был пропущен.", isCorrect: false },
+          { text: "0", comment: "Ветка else срабатывает только если ни одно из условий выше не оказалось истинным.", isCorrect: false }
+        ],
+        correctCode: null
+      },
+      // Задание 12
+      {
+        text: "№12. В чем заключается синтаксическая ошибка в этой программе?",
+        code: "age = int(input(\"Возраст: \"))\n\nif age >= 16\n    print(\"Проходите\")\nelse:\n    print(\"Вход закрыт\")",
+        options: [
+          { text: "В конце строк if и else забыли поставить обязательные двоеточия «:»", comment: "Каждая строка условия в Python (if, elif, else) обязана оканчиваться двоеточием.", isCorrect: true },
+          { text: "После if нельзя делать отступ в 4 пробела", comment: "Отступы в Python строго обязательны для обозначения тела блока.", isCorrect: false },
+          { text: "Оператора >= не существует в Python", comment: "Оператор >= (больше или равно) является стандартным.", isCorrect: false },
+          { text: "Вместо else нужно обязательно писать elif", comment: "Для двух альтернатив конструкция if ... else абсолютно верна.", isCorrect: false }
+        ],
+        correctCode: "age = int(input(\"Возраст: \"))\n\nif age >= 16:\n    print(\"Проходите\")\nelse:\n    print(\"Вход закрыт\")"
+      },
+      // Задание 13
+      {
+        text: "№13. Какую ошибку вызовет интерпретатор Python при попытке запустить этот код?",
+        code: "score = 85\n\nif score >= 80:\nprint(\"Отлично!\")\nelse:\n    print(\"Попробуйте еще раз\")",
+        options: [
+          { text: "IndentationError: строчка print(\"Отлично!\") написана без обязательного отступа в 4 пробела", comment: "Тело блока после if обязано быть смещено вправо (обычно 4 пробела). Отсутствие отступа вызывает ошибку IndentationError: expected an indented block.", isCorrect: true },
+          { text: "TypeError: нельзя сравнивать переменную score с числом 80", comment: "Сравнение чисел оператором >= корректно.", isCorrect: false },
+          { text: "SyntaxError: слово score является зарезервированным", comment: "score — корректное имя переменной.", isCorrect: false },
+          { text: "Программа напечатает обе фразы", comment: "Код даже не начнет выполняться из-за синтаксической ошибки структуры отступов.", isCorrect: false }
+        ],
+        correctCode: "score = 85\n\nif score >= 80:\n    print(\"Отлично!\")\nelse:\n    print(\"Попробуйте еще раз\")"
+      },
+      // Задание 14
+      {
+        text: "№14. Программа проверяет четность числа. Какая критическая ошибка допущена в строке с if?",
+        code: "num = int(input(\"Число: \"))\n\nif num % 2 = 0:\n    print(\"Четное\")\nelse:\n    print(\"Нечетное\")",
+        options: [
+          { text: "Использован одинарный знак присваивания = вместо оператора сравнения ==", comment: "Одинарный знак = записывает значение в переменную. Для проверки равенства в условии обязательно используется двойное равенство ==.", isCorrect: true },
+          { text: "Для четности остаток должен проверяться через обычное деление / 2", comment: "Деление / дает вещественное число, а остаток вычисляется только оператором %.", isCorrect: false },
+          { text: "Ветку else синтаксически запрещено использовать с проверкой остатка %", comment: "Ветка else универсальна и может использоваться с любыми условиями.", isCorrect: false },
+          { text: "Внутри if нельзя писать математические операции", comment: "Внутри условий можно производить любые допустимые вычисления.", isCorrect: false }
+        ],
+        correctCode: "num = int(input(\"Число: \"))\n\nif num % 2 == 0:\n    print(\"Четное\")\nelse:\n    print(\"Нечетное\")"
+      },
+      // Задание 15
+      {
+        text: "№15. Почему этот фрагмент кода завершится ошибкой SyntaxError?",
+        code: "ball = 3\n\nif ball == 5:\n    print(\"Отлично\")\nelse ball == 4:\n    print(\"Хорошо\")\nelse:\n    print(\"Нужно подтянуть\")",
+        options: [
+          { text: "После else написали условие ball == 4: для дополнительных условий нужно использовать elif", comment: "Ветка else перехватывает все оставшиеся случаи и не может иметь собственного условия. Для проверки дополнительного условия используется ключевое слово elif.", isCorrect: true },
+          { text: "В Python нельзя использовать больше одной ветки ветвления", comment: "Цепочки ветвлений могут содержать сколько угодно проверок через elif.", isCorrect: false },
+          { text: "Слово print написано с заглавной буквы", comment: "Функция print написана со строчной буквы.", isCorrect: false },
+          { text: "Переменная ball не может быть равна числу", comment: "Присваивание числа целочисленной переменной корректно.", isCorrect: false }
+        ],
+        correctCode: "ball = 3\n\nif ball == 5:\n    print(\"Отлично\")\nelif ball == 4:\n    print(\"Хорошо\")\nelse:\n    print(\"Нужно подтянуть\")"
+      },
+      // Задание 16 (без спойлера в вопросе)
+      {
+        text: "№16. Какая ошибка допущена в этом коде?",
+        code: "price = 500\n\nif price =< 1000:\n    print(\"Базовая цена\")\nelse:\n    print(\"Премиум цена\")",
+        options: [
+          { text: "Неверный порядок знаков в операторе сравнения: написано =< вместо <=", comment: "Составные операторы сравнения всегда пишутся со знаком равенства на втором месте: <= (меньше или равно), >= (больше или равно), != (не равно). Написание =< недопустимо и вызывает ошибку синтаксиса.", isCorrect: true },
+          { text: "Слово price нельзя использовать в качестве имени переменной", comment: "Имя price полностью соответствует правилам именования идентификаторов.", isCorrect: false },
+          { text: "Ветку else нельзя ставить после сравнения чисел", comment: "Блок else синтаксически корректно закрывает любое условие if.", isCorrect: false },
+          { text: "Число 1000 обязательно нужно было взять в кавычки \"1000\"", comment: "Оборачивание в кавычки превратит число в строку, что привело бы к ошибке сравнения типов.", isCorrect: false }
+        ],
+        correctCode: "price = 500\n\nif price <= 1000:\n    print(\"Базовая цена\")\nelse:\n    print(\"Премиум цена\")"
+      }
+    ];
+
+    const letters = ["А", "Б", "В", "Г"];
+    let questions = [];
+    let currentQuestion = 0;
+    let score = 0;
+    let currentQuestionSolved = false;
+    let attemptsThisQuestion = 0;
+    let questionResults = [];
+
+    function getRandomItem(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Подготовка списка заданий со случайной подстановкой вариантов
+    function prepareQuestions() {
+      const q1 = getRandomItem(dynamicSlots.slot1);
+      const q2 = getRandomItem(dynamicSlots.slot2);
+      const q3 = staticQuestions[0]; // №3
+      const q4 = getRandomItem(dynamicSlots.slot4);
+      const q5 = staticQuestions[1]; // №5
+      const q6 = getRandomItem(dynamicSlots.slot6); // №6 (динамический, 2 варианта)
+      const q7 = getRandomItem(dynamicSlots.slot7); // №7 (динамический)
+      const q8 = getRandomItem(dynamicSlots.slot8); // №8 (динамический)
+      const q9 = getRandomItem(dynamicSlots.slot9); // №9 (динамический)
+      const q10 = staticQuestions[2]; // №10
+      const q11 = getRandomItem(dynamicSlots.slot11); // №11 (динамический)
+      const q12 = staticQuestions[3]; // №12
+      const q13 = staticQuestions[4]; // №13
+      const q14 = staticQuestions[5]; // №14
+      const q15 = staticQuestions[6]; // №15
+      const q16 = staticQuestions[7]; // №16
+
+      const compiledQuestions = [
+        q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14, q15, q16
+      ];
+
+      questions = compiledQuestions.map(q => {
+        return {
+          ...q,
+          options: shuffleArray(q.options)
+        };
+      });
+    }
+
+    function startQuiz() {
+      prepareQuestions();
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('quiz-content').style.display = 'block';
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      currentQuestionSolved = false;
+      attemptsThisQuestion = 0;
+      const q = questions[currentQuestion];
+      
+      document.getElementById('question-number').innerText = `Задание ${currentQuestion + 1} из ${questions.length}`;
+      document.getElementById('score-counter').innerText = `Баллы: ${score}`;
+      document.getElementById('progress').style.width = `${(currentQuestion / questions.length) * 100}%`;
+      
+      document.getElementById('question-text').innerText = q.text;
+      
+      const codeBlock = document.getElementById('code-block');
+      if (q.code) {
+        codeBlock.innerText = q.code;
+        codeBlock.style.display = 'block';
+      } else {
+        codeBlock.style.display = 'none';
+      }
+
+      const optionsContainer = document.getElementById('options');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = `${letters[index]}) ${opt.text}`;
+        btn.onclick = () => selectOption(index, btn);
+        optionsContainer.appendChild(btn);
+      });
+
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'none';
+      feedback.className = 'feedback-box';
+      feedback.innerHTML = '';
+      
+      document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function selectOption(selectedIndex, clickedBtn) {
+      if (currentQuestionSolved) return;
+
+      const q = questions[currentQuestion];
+      const feedback = document.getElementById('feedback');
+      const selectedOptionData = q.options[selectedIndex];
+
+      if (selectedOptionData.isCorrect) {
+        currentQuestionSolved = true;
+
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach((btn, idx) => {
+          btn.disabled = true;
+          if (q.options[idx].isCorrect) {
+            btn.classList.remove('wrong');
+            btn.classList.add('correct');
+          }
+        });
+
+        if (attemptsThisQuestion === 0) {
+          score++;
+          questionResults.push(true);
+        } else {
+          questionResults.push(false);
+        }
+
+        document.getElementById('score-counter').innerText = `Баллы: ${score}`;
+
+        feedback.className = 'feedback-box correct';
+        feedback.style.display = 'block';
+        
+        let feedbackHTML = `<strong>Верно.</strong> ${selectedOptionData.comment}`;
+        if (q.correctCode) {
+          feedbackHTML += `<div class="code-subtitle">Корректный код:</div>` +
+                          `<div class="correct-code-display">${q.correctCode}</div>`;
+        }
+        feedback.innerHTML = feedbackHTML;
+
+        document.getElementById('next-btn').style.display = 'block';
+      } else {
+        attemptsThisQuestion++;
+        clickedBtn.classList.add('wrong');
+        feedback.className = 'feedback-box wrong';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>Неверно.</strong> ${selectedOptionData.comment}`;
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quiz-content').style.display = 'none';
+      const resultScreen = document.getElementById('result-screen');
+      resultScreen.style.display = 'block';
+      
+      document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
+      const msg = document.getElementById('final-message');
+      
+      if (score === questions.length) {
+        msg.innerText = "Превосходный результат! Все тестовые задачи решены с первой попытки без единой ошибки.";
+      } else if (score >= 12) {
+        msg.innerText = "Хороший уровень подготовки: базовые конструкции и правила ветвления усвоены уверенно.";
+      } else {
+        msg.innerText = "Рекомендуется повторить синтаксические правила оформления условий (двоеточия, отступы в 4 пробела) и работу логических операторов.";
+      }
+
+      const badgesContainer = document.getElementById('results-badges');
+      badgesContainer.innerHTML = '';
+      questionResults.forEach((isSuccess, idx) => {
+        const badge = document.createElement('div');
+        badge.className = `badge-item ${isSuccess ? 'correct' : 'wrong'}`;
+        badge.innerText = `№${idx + 1}`;
+        badgesContainer.appendChild(badge);
+      });
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      questionResults = [];
+      document.getElementById('result-screen').style.display = 'none';
+      document.getElementById('start-screen').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
